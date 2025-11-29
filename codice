@@ -1,0 +1,65 @@
+import discord
+import random
+import requests
+import os
+from discord.ext import commands
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+m = 1
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+@bot.event
+async def on_ready():
+    print(f'Hai fatto l\'accesso come {bot.user}')
+
+@bot.command()
+async def ciao(ctx):
+    await ctx.send(f"Ciao! Sono un bot {bot.user}! il mio compito è rispndere alle tue domande sull' ambiente e farti divertire con delle immagini divertenti! scrivi $fun per divertirti e  $planet per avere dei fatti interessanti su come preservare il nostro pianeta")
+
+@bot.command()
+async def fun(ctx):
+    global m
+    m = fun
+    await ctx.send(f"modalità divertimento attivata! scrivi $cat per ricevere una foto di un gatto o $duck per ricevere una foto di un'anatra")
+    @bot.command()
+
+    async def cat(ctx):
+        img_name = random.choice(os.listdir('immages'))
+        with open(f'immages/{img_name}', 'rb') as f:
+            picture = discord.File(f)
+        await ctx.send(file=picture)
+
+    @bot.command('duck')
+    async def duck(ctx):
+        url = get_duck_image_url()
+        await ctx.send(url)
+
+
+@bot.command()
+async def planet(ctx):
+    global m
+    m = planet
+    await ctx.send(f"modalità pianeta attivata! scrivi $fact per ricevere un fatto interessante su come preservare il nostro pianeta")
+
+    @bot.command()
+    async def fact(ctx):
+        facts = [
+            "Gli alberi assorbono CO2 e rilasciano ossigeno, contribuendo a combattere il cambiamento climatico.",
+            "Il riciclaggio riduce la quantità di rifiuti nelle discariche e conserva le risorse naturali.",
+            "L'energia solare è una fonte di energia pulita e rinnovabile che può ridurre la dipendenza dai combustibili fossili.",
+            "Ridurre l'uso della plastica monouso aiuta a proteggere la fauna marina e riduce l'inquinamento degli oceani.",
+            "Pianta un albero: gli alberi migliorano la qualità dell'aria, forniscono habitat per la fauna selvatica e mitigano l'effetto isola di calore urbano."
+        ]
+        fact = random.choice(facts)
+        await ctx.send(fact)
+
+bot.run('inserisci il token')
